@@ -1,0 +1,286 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Linq;
+
+namespace CSProjectPICS
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            double weight = 0.0;
+            double height = 0.0;
+            double BMI = 0.0;
+            Console.WriteLine("Welcome to VHealth! First let's calculate your BMI to help get to know your body better :)");
+
+            Console.WriteLine("Do you want to use metric or imperial measurements (type in metric or imperial)?");
+            string method = Console.ReadLine();
+            while (!method.Equals(""))
+            {
+                if (method.Equals("metric"))
+                {
+                    BMIMetric met = new BMIMetric();
+                    weight = met.getWeight();
+                    height = met.getHeight();
+
+                    BMI = met.calculateBMI(weight, height);
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Your final BMI is: " + Math.Round(BMI, 2));
+                    Console.ResetColor();
+                    break;
+                }
+                else if (method.Equals("imperial"))
+                {
+                    BMIImperial imp = new BMIImperial();
+                    weight = imp.getWeight();
+                    height = imp.getHeight();
+
+                    BMI = imp.calculateBMI(weight, height);
+                    Console.ForegroundColor = ConsoleColor.Blue;
+                    Console.WriteLine("Your final BMI is: " + Math.Round(BMI, 2));
+                    Console.ResetColor();
+                    break;
+
+                }
+                else
+                {
+                    Console.WriteLine("Type in a valid measurement!");
+                    method = Console.ReadLine();
+                }
+            }
+            Console.WriteLine("-----------------------------------------------------");
+            WorkoutPlan.Choice();
+            
+        }
+
+
+        class BMIMetric : IBMIable
+        {
+            private double finalWeight { get; set; }
+            public double FinalWeight {
+                get
+                {
+                    if (finalWeight > 0)
+                    {
+                        return finalWeight;
+                    }
+                    else
+                    {
+                        return 0.0;
+                    }
+
+                }
+                set { 
+                    finalWeight = value; 
+                }
+            }
+            private double finalHeight { get; set; }
+            public double FinalHeight {
+                get
+                {
+                    if (finalHeight > 0 && finalHeight < 300)
+                    {
+                        return finalWeight;
+                    }
+                    else
+                    {
+                        return 0.0;
+                    }
+
+                }
+                set { finalHeight = value; }
+            }
+            private string testWeight { get; set; }
+            private string testHeight { get; set; }
+            public double getWeight()
+            {
+                Console.WriteLine("Enter your weight in kg: ");
+                testWeight = Console.ReadLine();
+                finalWeight = Double.TryParse(testWeight, out double weight) ? weight : 0.0;
+                return finalWeight;
+            }
+
+            public double getHeight()
+            {
+                Console.WriteLine("Enter your height in cm (ex. 167): ");
+                testHeight = Console.ReadLine();
+                finalHeight = Double.TryParse(testHeight, out double height) ? height : 0.0;
+                return finalHeight;
+            }
+            public double calculateBMI(double weight, double height)
+            {
+                double bmi = finalWeight / finalHeight / finalHeight * 10000;
+                return bmi;
+            }
+        }
+
+
+        class BMIImperial : IBMIable
+        {
+            private double height { get; set; }
+            public double Height {
+                get
+                {
+                    if (height > 0 && height < 300)
+                    {
+                        return finalWeight;
+                    }
+                    else
+                    {
+                        return 0.0;
+                    }
+
+                }
+                set { height = value; }
+            }
+            private double finalWeight { get; set; }
+            public double FinalWeight {
+                get
+                {
+                    if (finalWeight > 0)
+                    {
+                        return finalWeight;
+                    }
+                    else
+                    {
+                        return 0.0;
+                    }
+
+                }
+                set { finalWeight = value; }
+            }
+            private string testWeight { get; set; }
+            public double getWeight()
+            {
+
+                Console.WriteLine("Enter your weight in pounds: ");
+                testWeight = Console.ReadLine();
+                finalWeight = Double.TryParse(testWeight, out double weight) ? weight : 0.0;
+                return finalWeight;
+            }
+
+
+            public double getHeight()
+            {
+                Console.WriteLine("Enter your height in feet and inches (ex. 5'8\"): ");
+                String input = Console.ReadLine();
+                String[] split = input.Split("'");
+                double resultFeet = Double.TryParse(split[0], out double feet) ? feet : 0.0;
+                double resultInches = Double.TryParse(split[1].Trim('"'), out double inches) ? inches : 0.0;
+                height = (resultFeet * 12) + resultInches;
+                return height;
+            }
+
+            public double calculateBMI(double weight, double height)
+            {
+                double meterHeight = height * 0.0254;
+                double kilogramWeight = finalWeight * 0.453592;
+                double bmi = kilogramWeight / (meterHeight * meterHeight);
+                return bmi;
+            }
+        }
+
+        class WorkoutPlan
+        {
+            public static void Choice()
+            {
+                Console.WriteLine("If BMI is below 18.5 or above 30.0, it falls in the underweight or obese range.");
+                Console.WriteLine("Based on this info, do you want to lose, gain or keep your current weight? (type in lose, gain or keep)");
+                string choice = Console.ReadLine();
+                switch (choice)
+                {
+                    case "lose":
+                        LoseWeight();
+                        break;
+
+                    case "gain":
+                        GainWeight();
+                        break;
+                    case "keep":
+                        KeepWeight();
+                        break;
+                }
+
+            }
+
+            public static void LoseWeight()
+            {
+                Stack<string> lossEx = new Stack<string>();
+                lossEx.Push("Rope Skipping");
+                lossEx.Push("Jumping Jacks");
+                lossEx.Push("Plank");
+                lossEx.Push("Mountain Climbers");
+                lossEx.Push("Squats");
+                lossEx.Push("Push Ups");
+                lossEx.Push("Burpees");
+
+                Console.WriteLine();
+                Console.WriteLine("Include these exercises in your routine to effectively lose weight: ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                while (lossEx.Count>0)
+                {
+                    string removed = lossEx.Pop();
+                    Console.Write(removed + " ");
+                }
+                Console.ResetColor();
+            }
+            public static void GainWeight()
+            {
+                Stack<string> gainEx = new Stack<string>();
+                gainEx.Push("Pull Ups");
+                gainEx.Push("Bench Press");
+                gainEx.Push("Lunges");
+                gainEx.Push("Overhead Press");
+                gainEx.Push("Deadlifts");
+                gainEx.Push("Crunches");
+                gainEx.Push("Tricep Dips");
+
+                Console.WriteLine();
+                Console.WriteLine("Include these exercises in your routine to effectively gain weight: ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                while (gainEx.Count > 0)
+                {
+                    string removed = gainEx.Pop();
+                    Console.Write(removed + " ");
+                }
+                Console.ResetColor();
+            }
+            public static void KeepWeight()
+            {
+                List<string> keepEx = new List<string>();
+                keepEx.Add("Jogging");
+                keepEx.Add("Swimming Laps");
+                keepEx.Add("Yoga");
+                keepEx.Add("Sit Ups");
+                keepEx.Add("Supermans");
+                keepEx.Add("Crunchworms");
+                keepEx.Add("Side Plank");
+                keepEx.Add("t");
+
+                Console.WriteLine();
+                Console.WriteLine("Include these exercises in your routine to effectively maitain your weight: ");
+                Console.ForegroundColor = ConsoleColor.DarkMagenta;
+                var Query1 = from x in keepEx
+                             where x.Length > 3
+                             select x;
+                foreach (string item in Query1)
+                {
+                    Console.Write(item + " ");
+                }
+                Console.ResetColor();
+
+            }
+
+
+        }
+        
+    }
+ interface IBMIable
+    {
+        double getWeight();
+        double getHeight();
+        double calculateBMI(double weight, double height);
+
+    }
+}
